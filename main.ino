@@ -30,10 +30,39 @@ class Timer {
         time_t last_time_;
 };
 
+struct Letter {
+    int buffer_;
+    int buffer_n_;
+    char symbol_;
+
+    Letter() : Letter(0, 0, 0) {}
+
+    Letter(int buffer, int buffer_n, char symbol) {
+        buffer_ = buffer;
+        buffer_n_ = buffer_n;
+        symbol_ = symbol;
+    }
+
+    void clear() {
+        buffer_ = 0;
+        buffer_n_ = 0;
+    }
+};
+
+bool operator==(const Letter& lhs, const Letter& rhs) {
+    return lhs.buffer_ == rhs.buffer_ && lhs.buffer_n_ == rhs.buffer_n_;
+}
+
+Letter patterns[] = {
+    {0b000, 3, 's'},
+    {0b111, 3, 'o'},
+};
+
 class MorseDecoder {
     public:
         MorseDecoder() {
             timer = new Timer();
+            letter = new Letter();
         }
 
         void update() {
@@ -41,7 +70,7 @@ class MorseDecoder {
             // Was released during dt
             if (!button_down_) {
                 if (dt > STOP_TIME) {
-                    clearBuffer();
+                    letter->clear();
                 } else if (dt > END_SYMBOL_TIME) {
                     endSymbol();
                 }
@@ -69,11 +98,11 @@ class MorseDecoder {
 
     private:
         void symbol(bool dash) {
-            if (symbol_buffer_n_ >= 32) {
-                Serial << "ERROR: Too long sequence. Buffer cleared.\n";
-                clearBuffer();
+            if (letter->buffer_n_ >= 32) {
+                Serial << "ERROR: Too long sequence. Letter cleared.\n";
+                letter->clear();
             }
-            symbol_buffer_ |= bit(symbol_buffer_n_++) * dash;
+            letter->buffer_ |= bit(letter->buffer_n_++) * dash;
         }
 
         void endWord() {
@@ -82,17 +111,24 @@ class MorseDecoder {
         }
 
         void endSymbol() {
-            if (symbol_buffer_n_ == 0) return;
-            for (int i = 0; i < symbol_buffer_n_; ++i) {
-                Serial << (symbol_buffer_ & bit(i) ? '-' : '.');
+            if (letter->buffer_n_ == 0) return;
+            // TODO: DEBUG
+            // for (int i = 0; i < letter->buffer_n_; ++i) {
+            //     Serial << (letter->buffer_ & bit(i) ? '-' : '.');
+            // }
+            // Serial << '\n';
+            bool found = 0;
+            for (const Letter& pattern : patterns) {
+                if (pattern == *letter) {
+                    Serial << pattern.symbol_ << '\n';
+                    found = 1;
+                    break;
+                }
             }
-            Serial << '\n';
-            clearBuffer();
-        }
-
-        void clearBuffer() {
-            symbol_buffer_n_ = 0;
-            symbol_buffer_ = 0;
+            if (!found) {
+                Serial << "ERROR: Unknown symbol\n";
+            }
+            letter->clear();
         }
 
         const time_t TIME_UNIT_ = 150;
@@ -101,8 +137,7 @@ class MorseDecoder {
         const time_t END_SYMBOL_TIME = 3  * TIME_UNIT_;
         const time_t END_WORD_TIME   = 7  * TIME_UNIT_;
         const time_t STOP_TIME       = 15 * TIME_UNIT_;
-        int symbol_buffer_ = 0;
-        int symbol_buffer_n_ = 0;
+        Letter* letter;
         Timer* timer;
         bool button_down_ = 0;
 };
