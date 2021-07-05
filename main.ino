@@ -131,12 +131,12 @@ class MorseDecoder {
             letter->clear();
         }
 
-        const time_t TIME_UNIT_ = 150;
+        const time_t TIME_UNIT_ = 120;
         const time_t DOT_TIME        = 1  * TIME_UNIT_;
         const time_t DASH_TIME       = 3  * TIME_UNIT_;
         const time_t END_SYMBOL_TIME = 3  * TIME_UNIT_;
         const time_t END_WORD_TIME   = 7  * TIME_UNIT_;
-        const time_t STOP_TIME       = 15 * TIME_UNIT_;
+        const time_t STOP_TIME       = 100 * TIME_UNIT_;
         Letter* letter;
         Timer* timer;
         bool button_down_ = 0;
