@@ -11,8 +11,10 @@ Print& operator<<(Print &obj, T arg) {
 
 class Timer {
     public:
-        Timer() {
-            last_time_ = millis();
+        Timer() : Timer(millis()) {}
+
+        Timer(const time_t& time) {
+            last_time_ = time;
         }
 
         time_t time() {
@@ -63,7 +65,7 @@ Letter patterns[] = {
 class MorseDecoder {
     public:
         MorseDecoder() {
-            timer = new Timer();
+            timer = new Timer(0);
             letter = new Letter();
         }
 
