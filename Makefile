@@ -8,6 +8,7 @@ ARDUINO_VAR_PATH = /usr/share/arduino/hardware/archlinux-arduino/avr/variants
 BOOTLOADER_PARENT = /usr/share/arduino/hardware/archlinux-arduino/avr/bootloaders
 
 BOARD_TAG    = leonardo
-# ARDUINO_LIBS = Keyboard
+ARDUINO_LIBS = HID Keyboard
+# sudo git clone https://github.com/arduino-libraries/Keyboard /usr/share/arduino/libraries/Keyboard
 
 include /usr/share/arduino/Arduino.mk

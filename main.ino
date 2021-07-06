@@ -1,6 +1,8 @@
+#include <Keyboard.h>
+
 using time_t = unsigned long;
 
-// Serial streaming syntax
+// Serial and Keyboard streaming syntax
 template<class T>
 Print& operator<<(Print &obj, T arg) {
     obj.print(arg);
@@ -108,19 +110,20 @@ class MorseDecoder {
         void endWord() {
             endSymbol();
             Serial << "/\n";
+            Keyboard << ' ';
         }
 
         void endSymbol() {
             if (letter->buffer_n_ == 0) return;
-            // TODO: DEBUG
-            // for (int i = 0; i < letter->buffer_n_; ++i) {
-            //     Serial << (letter->buffer_ & bit(i) ? '-' : '.');
-            // }
-            // Serial << '\n';
+            for (int i = 0; i < letter->buffer_n_; ++i) {
+                Serial << (letter->buffer_ & bit(i) ? '-' : '.');
+            }
+
             bool found = 0;
             for (const Letter& pattern : patterns) {
                 if (pattern == *letter) {
                     Serial << pattern.symbol_ << '\n';
+                    Keyboard << pattern.symbol_;
                     found = 1;
                     break;
                 }
@@ -147,6 +150,7 @@ MorseDecoder* decoder;
 
 void setup() {
     Serial.begin(9600);
+    Keyboard.begin();
 
     pinMode(BTN_PIN, INPUT_PULLUP);
 
