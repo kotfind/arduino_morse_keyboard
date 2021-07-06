@@ -1,3 +1,7 @@
+/** Circuit description
+ * button on pin 8 and GND
+ */
+
 #include <Keyboard.h>
 
 using time_t = unsigned long;
