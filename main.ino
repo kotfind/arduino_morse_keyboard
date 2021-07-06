@@ -62,8 +62,32 @@ bool operator==(const Letter& lhs, const Letter& rhs) {
 }
 
 Letter patterns[] = {
-    {0b000, 3, 's'},
-    {0b111, 3, 'o'},
+    {0b01  , 2, 'a'},
+    {0b1000, 4, 'b'},
+    {0b011 , 3, 'w'},
+    {0b110 , 3, 'g'},
+    {0b100 , 3, 'd'},
+    {0b0   , 1, 'e'},
+    {0b0001, 4, 'v'},
+    {0b1100, 4, 'z'},
+    {0b00  , 2, 'i'},
+    {0b0111, 4, 'j'},
+    {0b101 , 3, 'k'},
+    {0b0100, 4, 'l'},
+    {0b11  , 2, 'm'},
+    {0b10  , 2, 'n'},
+    {0b111 , 3, 'o'},
+    {0b0110, 4, 'p'},
+    {0b010 , 3, 'r'},
+    {0b000 , 3, 's'},
+    {0b1   , 1, 't'},
+    {0b001 , 3, 'u'},
+    {0b0010, 4, 'f'},
+    {0b0000, 4, 'h'},
+    {0b1010, 4, 'c'},
+    {0b1101, 4, 'q'},
+    {0b1011, 4, 'y'},
+    {0b1001, 4, 'x'},
 };
 
 class MorseDecoder {
@@ -110,7 +134,9 @@ class MorseDecoder {
                 Serial << "ERROR: Too long sequence. Letter cleared.\n";
                 letter->clear();
             }
-            letter->buffer_ |= bit(letter->buffer_n_++) * dash;
+            letter->buffer_ <<= 1;
+            letter->buffer_ |= dash;
+            ++letter->buffer_n_;
         }
 
         void endWord() {
