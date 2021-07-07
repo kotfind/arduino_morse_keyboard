@@ -147,6 +147,7 @@ class MorseDecoder {
             // Was pressed during dt
             if (dt > BACKSPACE_TIME) {
                 Keyboard.release(8);
+                letter->clear();
                 return;
             }
 
