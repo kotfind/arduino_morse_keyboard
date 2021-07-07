@@ -120,8 +120,11 @@ class MorseDecoder {
 
         void update() {
             time_t dt = timer->delta(0);
-            // Was released during dt
-            if (!button_down_) {
+            if (button_down_) {
+                if (dt > BACKSPACE_TIME) {
+                    Keyboard.press(8);
+                }
+            } else {
                 if (dt > STOP_TIME) {
                     letter->clear();
                 } else if (dt > END_SYMBOL_TIME) {
@@ -142,6 +145,11 @@ class MorseDecoder {
             button_down_ = 0;
             time_t dt = timer->delta();
             // Was pressed during dt
+            if (dt > BACKSPACE_TIME) {
+                Keyboard.release(8);
+                return;
+            }
+
             if (dt < (DOT_TIME + DASH_TIME) / 2) {
                 symbol(0);
             } else {
@@ -192,7 +200,8 @@ class MorseDecoder {
         const time_t DASH_TIME       = 3  * TIME_UNIT_;
         const time_t END_SYMBOL_TIME = 3  * TIME_UNIT_;
         const time_t END_WORD_TIME   = 7  * TIME_UNIT_;
-        const time_t STOP_TIME       = 100 * TIME_UNIT_;
+        const time_t STOP_TIME       = 30 * TIME_UNIT_;
+        const time_t BACKSPACE_TIME  = 6  * TIME_UNIT_;
         Letter* letter;
         Timer* timer;
         bool button_down_ = 0;
